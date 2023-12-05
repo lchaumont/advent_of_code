@@ -1,0 +1,11 @@
+{
+  "name": "advent_of_code_2023",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "main": "node main.js"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}
