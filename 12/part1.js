@@ -19,19 +19,28 @@ const main = (input) => {
         return _.isEqual(s, counts);
     }
 
+    const dp = new Map();
     function recursive(records, counts, index) {
+        if (dp.has(`${records}-${counts}`)) {
+            return dp.get(`${records}-${counts}`);
+        }
+
         if (index === records.length) {
-            if (testIfValid(records, counts)) return 1
-            else return 0;
+            const r = testIfValid(records, counts) ? 1 : 0;
+            dp.set(`${records}-${counts}`, r);
+            return r;
         }
 
         if (records[index] === "?") {
             // Somme des cas où ? = . && Somme des cas où ? = #
             const asDot = recursive(records.substring(0, index) + "." + records.substring(index + 1), counts, index + 1);
             const asHash = recursive(records.substring(0, index) + "#" + records.substring(index + 1), counts, index + 1);
+            dp.set(`${records}-${counts}`, asDot + asHash);
             return asDot + asHash;
         } else {
-            return recursive(records, counts, index + 1);
+            const r = recursive(records, counts, index + 1);
+            dp.set(`${records}-${counts}`, r);
+            return r;
         }
     }
 
@@ -42,6 +51,9 @@ const main = (input) => {
         const score = recursive(records, counts, 0);
         console.log(records, counts, score);
         sum += score;
+
+        console.log(dp);
+        console.log(dp.length);
     }
 
     console.log("Somme: ", sum);
