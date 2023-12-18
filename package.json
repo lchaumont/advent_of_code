@@ -6,6 +6,6 @@
     "main": "node main.js"
   },
   "dependencies": {
-    "lodash": "^4.17.21"
+    "advent_of_code_ts_library": "^1.0.3"
   }
 }

@@ -1,4 +1,5 @@
 import fs from "fs";
+import path from "path";
 
 const main = (input) => {
     input = input
@@ -7,6 +8,18 @@ const main = (input) => {
         .replaceAll(")", "")
         .split("\n")
         .filter((line) => line.trim() !== "");
+
+    function getDirection(digit) {
+        if (digit === 0) {
+            return "R";
+        } else if (digit === 1) {
+            return "D";
+        } else if (digit === 2) {
+            return "L";
+        }
+
+        return "U";
+    }
 
     const data = input.map((line) => {
         const [direction, distance, color] = line.split(" ");
@@ -17,10 +30,16 @@ const main = (input) => {
         };
     });
 
-    const path = [];
+    const corners = [];
     const pos = {x: 0, y: 0};
-    let previousDirection = "U";
-    function applyInstruction(pos, instruction) {
+
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+
+    let pathLength = 0;
+    function applyInstruction(instruction) {
         const delta = {x: 0, y: 0};
 
         if (instruction.direction === "R") {
@@ -33,143 +52,50 @@ const main = (input) => {
             delta.y = +instruction.distance;
         }
 
-        for (let x = 0; x < Math.abs(delta.x); x++) {
-            let symbol = undefined;
-            if (
-                (previousDirection === "R" && instruction.direction === "U") ||
-                (previousDirection === "D" && instruction.direction === "L")
-            ) {
-                symbol = "┛";
-            } else if (
-                (previousDirection === "R" && instruction.direction === "D") ||
-                (previousDirection === "U" && instruction.direction === "L")
-            ) {
-                symbol = "┓";
-            } else if (
-                (previousDirection === "L" && instruction.direction === "U") ||
-                (previousDirection === "D" && instruction.direction === "R")
-            ) {
-                symbol = "┗";
-            } else if (
-                (previousDirection === "L" && instruction.direction === "D") ||
-                (previousDirection === "U" && instruction.direction === "R")
-            ) {
-                symbol = "┏";
-            } else if (
-                (previousDirection === "R" && instruction.direction === "R") ||
-                (previousDirection === "L" && instruction.direction === "L")
-            ) {
-                symbol = "━";
-            } else if (
-                (previousDirection === "U" && instruction.direction === "U") ||
-                (previousDirection === "D" && instruction.direction === "D")
-            ) {
-                symbol = "┃";
-            }
-
-            path.push({x: pos.x, y: pos.y, symbol});
-            pos.x += Math.sign(delta.x);
-            previousDirection = instruction.direction;
+        if (delta.x !== 0) {
+            corners.push({x: pos.x, y: pos.y});
+            pos.x += delta.x;
         }
 
-        for (let y = 0; y < Math.abs(delta.y); y++) {
-            let symbol = undefined;
-            if (
-                (previousDirection === "R" && instruction.direction === "U") ||
-                (previousDirection === "D" && instruction.direction === "L")
-            ) {
-                symbol = "┛";
-            } else if (
-                (previousDirection === "R" && instruction.direction === "D") ||
-                (previousDirection === "U" && instruction.direction === "L")
-            ) {
-                symbol = "┓";
-            } else if (
-                (previousDirection === "L" && instruction.direction === "U") ||
-                (previousDirection === "D" && instruction.direction === "R")
-            ) {
-                symbol = "┗";
-            } else if (
-                (previousDirection === "L" && instruction.direction === "D") ||
-                (previousDirection === "U" && instruction.direction === "R")
-            ) {
-                symbol = "┏";
-            } else if (
-                (previousDirection === "R" && instruction.direction === "R") ||
-                (previousDirection === "L" && instruction.direction === "L")
-            ) {
-                symbol = "━";
-            } else if (
-                (previousDirection === "U" && instruction.direction === "U") ||
-                (previousDirection === "D" && instruction.direction === "D")
-            ) {
-                symbol = "┃";
-            }
-
-            path.push({x: pos.x, y: pos.y, symbol});
-            pos.y += Math.sign(delta.y);
-            previousDirection = instruction.direction;
+        if (delta.y !== 0) {
+            corners.push({x: pos.x, y: pos.y});
+            pos.y += delta.y;
         }
+
+        if (pos.x < minX) {
+            minX = pos.x;
+        }
+
+        if (pos.x > maxX) {
+            maxX = pos.x;
+        }
+
+        if (pos.y < minY) {
+            minY = pos.y;
+        }
+
+        if (pos.y > maxY) {
+            maxY = pos.y;
+        }
+
+        pathLength += Math.abs(delta.x) + Math.abs(delta.y);
     }
 
     for (const instruction of data) {
-        applyInstruction(pos, instruction);
+        applyInstruction(instruction);
     }
 
-    const minX = Math.min(...path.map((corner) => corner.x));
-    const minY = Math.min(...path.map((corner) => corner.y));
-    const maxX = Math.max(...path.map((corner) => corner.x));
-    const maxY = Math.max(...path.map((corner) => corner.y));
+    let area = 0;
 
-    function logPath(path) {
-        let log = "";
-        for (let y = minY; y <= maxY; y++) {
-            let line = "";
-            for (let x = minX; x <= maxX; x++) {
-                const node = path.find((node) => node.x === x && node.y === y);
-                if (node !== undefined) {
-                    line += node.symbol;
-                } else {
-                    line += ".";
-                }
-            }
-            log += line + "\n";
-        }
-
-        return log;
-    }
-    
-    path.find((node) => node.x === 0 && node.y === 0).symbol = "O"
-
-    fs.writeFile("./18/output_test.txt", logPath(path), (err) => {
-        if (err) {
-            console.error(err);
-        }
-    });
-
-    let counter = 0;
-    for (let y = minY; y <= maxY; y++) {
-        const corners = path.filter((node) => node.y === y).sort((a, b) => a.x - b.x)
-            .filter((node) => !(node.symbol === "━" || node.symbol === "┛" || node.symbol === "┗"));
-
-        if (corners.length % 2 === 1) {
-            console.error("WTF")
-        } else {
-            for (let i = 0; i < corners.length; i += 2) {
-                const startX = corners[i].x;
-                const endX = corners[i + 1].x;
-
-                for (let x = startX; x <= endX; x++) {
-                    if (!path.find((node) => node.x === x && node.y === y)) {
-                        counter++;
-                    }
-                }
-            }
-        }
+    for (let i = 0; i< corners.length; i++) {
+        const corner = corners[i];
+        const nextCorner = corners[i + 1] ? corners[i + 1] : corners[0];
+        area = area + (corner.x * nextCorner.y) - (corner.y * nextCorner.x);
     }
 
-    counter += path.length;
-    console.log(counter);
+    const finalArea = area / 2;
+    console.log(finalArea);
+    console.log(finalArea + pathLength / 2 + 1);
 };
 
 export default main;

@@ -12,7 +12,11 @@ async function main() {
     const text = file.toString();
 
     const runner = await import(`./${day}/part${part}.js`);
+    const start = new Date().getTime();
     runner.default(text);
+    const end = new Date().getTime();
+
+    console.log(`Time: ${end - start}ms`);
   } catch (err) {
     console.log(err);
   }

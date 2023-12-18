@@ -38,11 +38,8 @@ const main = (input) => {
         };
     });
 
-    console.log(data);
-
     const corners = [];
     const pos = {x: 0, y: 0};
-    let previousDirection = "U";
 
     let minX = Infinity;
     let minY = Infinity;
@@ -53,39 +50,24 @@ const main = (input) => {
     function applyInstruction(instruction) {
         const delta = {x: 0, y: 0};
 
-        let symbol = undefined;
         if (instruction.direction === "R") {
             delta.x = instruction.distance;
-            if (previousDirection === "U") symbol = "┏";
-            else if (previousDirection === "D") symbol = "┗";
-            else if (previousDirection === "L") symbol = "━";
         } else if (instruction.direction === "L") {
             delta.x = -instruction.distance;
-            if (previousDirection === "U") symbol = "┓";
-            else if (previousDirection === "D") symbol = "┛";
-            else if (previousDirection === "R") symbol = "━";
         } else if (instruction.direction === "U") {
             delta.y = -instruction.distance;
-            if (previousDirection === "R") symbol = "┛";
-            else if (previousDirection === "L") symbol = "┗";
-            else if (previousDirection === "D") symbol = "┃";
         } else if (instruction.direction === "D") {
             delta.y = +instruction.distance;
-            if (previousDirection === "R") symbol = "┓";
-            else if (previousDirection === "L") symbol = "┏";
-            else if (previousDirection === "U") symbol = "┃";
         }
 
         if (delta.x !== 0) {
-            corners.push({x: pos.x, y: pos.y, symbol});
+            corners.push({x: pos.x, y: pos.y});
             pos.x += delta.x;
-            previousDirection = instruction.direction;
         }
 
         if (delta.y !== 0) {
-            corners.push({x: pos.x, y: pos.y, symbol});
+            corners.push({x: pos.x, y: pos.y});
             pos.y += delta.y;
-            previousDirection = instruction.direction;
         }
 
         if (pos.x < minX) {
@@ -111,9 +93,16 @@ const main = (input) => {
         applyInstruction(instruction);
     }
 
-    console.log(corners)
-    console.log(pathLength);
-    console.log(minX, minY, maxX, maxY);
+    let area = 0;
+
+    for (let i = 0; i< corners.length; i++) {
+        const corner = corners[i];
+        const nextCorner = corners[i + 1] ? corners[i + 1] : corners[0];
+        area = area + (corner.x * nextCorner.y) - (corner.y * nextCorner.x);
+    }
+
+    const finalArea = area / 2;
+    console.log(finalArea + pathLength / 2 + 1);
 };
 
 export default main;
