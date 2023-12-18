@@ -9,16 +9,17 @@ const main = (input) => {
         .filter((line) => line.trim() !== "");
 
     const data = input.map((line) => {
-        const [directionn, distance, color] = line.split(" ");
+        const [direction, distance, color] = line.split(" ");
         return {
-            direction: directionn,
+            direction,
             distance: parseInt(distance),
-            color: color,
+            color,
         };
     });
 
     const path = [];
     const pos = {x: 0, y: 0};
+    let previousDirection = "U";
     function applyInstruction(pos, instruction) {
         const delta = {x: 0, y: 0};
 
@@ -33,21 +34,87 @@ const main = (input) => {
         }
 
         for (let x = 0; x < Math.abs(delta.x); x++) {
+            let symbol = undefined;
+            if (
+                (previousDirection === "R" && instruction.direction === "U") ||
+                (previousDirection === "D" && instruction.direction === "L")
+            ) {
+                symbol = "┛";
+            } else if (
+                (previousDirection === "R" && instruction.direction === "D") ||
+                (previousDirection === "U" && instruction.direction === "L")
+            ) {
+                symbol = "┓";
+            } else if (
+                (previousDirection === "L" && instruction.direction === "U") ||
+                (previousDirection === "D" && instruction.direction === "R")
+            ) {
+                symbol = "┗";
+            } else if (
+                (previousDirection === "L" && instruction.direction === "D") ||
+                (previousDirection === "U" && instruction.direction === "R")
+            ) {
+                symbol = "┏";
+            } else if (
+                (previousDirection === "R" && instruction.direction === "R") ||
+                (previousDirection === "L" && instruction.direction === "L")
+            ) {
+                symbol = "━";
+            } else if (
+                (previousDirection === "U" && instruction.direction === "U") ||
+                (previousDirection === "D" && instruction.direction === "D")
+            ) {
+                symbol = "┃";
+            }
+
+            path.push({x: pos.x, y: pos.y, symbol});
             pos.x += Math.sign(delta.x);
-            path.push({x: pos.x, y: pos.y});
+            previousDirection = instruction.direction;
         }
 
         for (let y = 0; y < Math.abs(delta.y); y++) {
+            let symbol = undefined;
+            if (
+                (previousDirection === "R" && instruction.direction === "U") ||
+                (previousDirection === "D" && instruction.direction === "L")
+            ) {
+                symbol = "┛";
+            } else if (
+                (previousDirection === "R" && instruction.direction === "D") ||
+                (previousDirection === "U" && instruction.direction === "L")
+            ) {
+                symbol = "┓";
+            } else if (
+                (previousDirection === "L" && instruction.direction === "U") ||
+                (previousDirection === "D" && instruction.direction === "R")
+            ) {
+                symbol = "┗";
+            } else if (
+                (previousDirection === "L" && instruction.direction === "D") ||
+                (previousDirection === "U" && instruction.direction === "R")
+            ) {
+                symbol = "┏";
+            } else if (
+                (previousDirection === "R" && instruction.direction === "R") ||
+                (previousDirection === "L" && instruction.direction === "L")
+            ) {
+                symbol = "━";
+            } else if (
+                (previousDirection === "U" && instruction.direction === "U") ||
+                (previousDirection === "D" && instruction.direction === "D")
+            ) {
+                symbol = "┃";
+            }
+
+            path.push({x: pos.x, y: pos.y, symbol});
             pos.y += Math.sign(delta.y);
-            path.push({x: pos.x, y: pos.y});
+            previousDirection = instruction.direction;
         }
     }
 
     for (const instruction of data) {
         applyInstruction(pos, instruction);
     }
-
-    console.log(path);
 
     const minX = Math.min(...path.map((corner) => corner.x));
     const minY = Math.min(...path.map((corner) => corner.y));
@@ -59,8 +126,9 @@ const main = (input) => {
         for (let y = minY; y <= maxY; y++) {
             let line = "";
             for (let x = minX; x <= maxX; x++) {
-                if (path.find((node) => node.x === x && node.y === y)) {
-                    line += "#";
+                const node = path.find((node) => node.x === x && node.y === y);
+                if (node !== undefined) {
+                    line += node.symbol;
                 } else {
                     line += ".";
                 }
@@ -69,37 +137,38 @@ const main = (input) => {
         }
 
         return log;
-    };
+    }
+    
+    path.find((node) => node.x === 0 && node.y === 0).symbol = "O"
 
-    /*
-    fs.writeFile("./18/output.txt", logPath(path), (err) => {
+    fs.writeFile("./18/output_test.txt", logPath(path), (err) => {
         if (err) {
             console.error(err);
         }
     });
-    */
 
     let counter = 0;
-    for (let y = 0; y <= maxY; y++) {
-        const linePath = path
-            .filter((node) => node.y === y)
-            .sort((a, b) => a.x - b.x)
-            .filter((node, index, array) => {
-                const previous = array[index - 1];
-                const next = array[index + 1];
+    for (let y = minY; y <= maxY; y++) {
+        const corners = path.filter((node) => node.y === y).sort((a, b) => a.x - b.x)
+            .filter((node) => !(node.symbol === "━" || node.symbol === "┛" || node.symbol === "┗"));
 
-                if (previous === undefined || next === undefined) return true;
-                if (previous && previous.x === node.x - 1 && next && next.x === node.x + 1) {
-                    return false;
+        if (corners.length % 2 === 1) {
+            console.error("WTF")
+        } else {
+            for (let i = 0; i < corners.length; i += 2) {
+                const startX = corners[i].x;
+                const endX = corners[i + 1].x;
+
+                for (let x = startX; x <= endX; x++) {
+                    if (!path.find((node) => node.x === x && node.y === y)) {
+                        counter++;
+                    }
                 }
-
-                return true;
-            });
-
-        const width = Math.abs(linePath[0].x - linePath[linePath.length - 1].x) + 1;
-        counter += width;
+            }
+        }
     }
 
+    counter += path.length;
     console.log(counter);
 };
 
