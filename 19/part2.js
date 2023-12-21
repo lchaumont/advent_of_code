@@ -67,8 +67,11 @@ const main = (input) => {
                     .map((x) => x.rules)
                     .flat()
                     .filter((x) => x.condition !== null && x.condition.includes(rating))
-                    .map((x) => x.condition.replaceAll(/[<>]+/gi, "").replaceAll(rating, ""))
-                    .map((x) => parseInt(x))
+                    .map((x) => x.condition.replaceAll(rating, ""))
+                    .map((x) => {
+                        const sign = x[0];
+                        return parseInt(x.substring(1));
+                    })
             ),
         ].sort((a, b) => a - b);
     }
@@ -78,10 +81,10 @@ const main = (input) => {
     const distinctS = collectDistinctRating("s");
     const distinctX = collectDistinctRating("x");
 
-    distinctA.unshift(0);
-    distinctM.unshift(0);
-    distinctS.unshift(0);
-    distinctX.unshift(0);
+    distinctA.unshift(1);
+    distinctM.unshift(1);
+    distinctS.unshift(1);
+    distinctX.unshift(1);
 
     distinctA.push(4000);
     distinctM.push(4000);
@@ -97,17 +100,19 @@ const main = (input) => {
     for (let j = 0; j < distinctA.length - 1; j++) {
         const a = distinctA[j];
         const nextA = distinctA[j + 1];
-        console.log("---- : " + j)
+        const aLength = nextA - a;
         for (let h = 0; h < distinctM.length - 1; h++) {
             const m = distinctM[h];
             const nextM = distinctM[h + 1];
-            console.log("--- : " + h)
+            const mLength = nextM - m;
             for (let g = 0; g < distinctS.length - 1; g++) {
                 const s = distinctS[g];
                 const nextS = distinctS[g + 1];
+                const sLength = nextS - s;
                 for (let i = 0; i < distinctX.length - 1; i++) {
                     const x = distinctX[i];
                     const nextX = distinctX[i + 1];
+                    const xLength = nextX - x;
 
                     const part = {a : a + 0.5, m : m + 0.5, s : s + 0.5, x : x + 0.5};
                     let safeLoop = 0;
@@ -124,8 +129,9 @@ const main = (input) => {
                     }
 
                     if (currentWorkflow === true) {
+                        const factor = xLength * sLength * mLength * aLength;
                         //console.log(a, nextA, "/", m, nextM, "/", s, nextS, "/", x, nextX);
-                        sum = sum + (nextX - x) * (nextS - s) * (nextM - m) * (nextA - a);
+                        sum = sum + factor;
                     }
                 }
             }
