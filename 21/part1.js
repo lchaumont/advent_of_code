@@ -41,7 +41,7 @@ const main = (input) => {
     const final = new Set();
     queue.push(getMapKey(S));
 
-    for (let i = 0; i < 500; i++) {
+    for (let i = 0; i < 64; i++) {
         const queueC = [...queue];
         queue = [];
         while (queueC.length > 0) {
