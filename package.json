@@ -6,6 +6,7 @@
     "main": "node main.js"
   },
   "dependencies": {
-    "advent_of_code_ts_library": "^1.0.3"
+    "advent_of_code_ts_library": "^1.0.3",
+    "z3-solver": "^4.12.4"
   }
 }
