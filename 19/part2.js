@@ -21,7 +21,7 @@ const main = (input) => {
             return {condition, direction};
         });
 
-        return {name, rules};
+        return {name, rules, usedTime : 0};
     });
 
     parts = parts.map((x) => {
@@ -36,27 +36,32 @@ const main = (input) => {
         return p;
     });
 
-    const inWorkflow = workflows.find((x) => x.name === "in");
-
     function getReturnForDirection(direction) {
         if (direction === "A") return true;
         else if (direction === "R") return false;
-        else return workflows.find((x) => x.name === direction);
+        else return mapWorkflow.get(direction);
     }
 
     function executeWorkflow(workflow, part) {
         const {x, m, a, s} = part;
-        const {name, rules} = workflow;
+        const rules = workflow;
 
         for (const rule of rules) {
-            if (rule.condition !== null && eval(rule.condition) === true) {
-                return getReturnForDirection(rule.direction);
-            } else if (rule.condition === null) {
-                return getReturnForDirection(rule.direction);
-            }
-        }
+            if (rule.condition === null) return getReturnForDirection(rule.direction);
 
-        console.error("No rule found for", name, part);
+            const variable = rule.condition[0];
+            const operator = rule.condition[1];
+            const value = rule.condition.substring(2);
+            if (variable === "x" && operator === "<" && x < value) return getReturnForDirection(rule.direction);
+            if (variable === "x" && operator === ">" && x > value) return getReturnForDirection(rule.direction);
+            if (variable === "m" && operator === "<" && m < value) return getReturnForDirection(rule.direction);
+            if (variable === "m" && operator === ">" && m > value) return getReturnForDirection(rule.direction);
+            if (variable === "a" && operator === "<" && a < value) return getReturnForDirection(rule.direction);
+            if (variable === "a" && operator === ">" && a > value) return getReturnForDirection(rule.direction);
+            if (variable === "s" && operator === "<" && s < value) return getReturnForDirection(rule.direction);
+            if (variable === "s" && operator === ">" && s > value) return getReturnForDirection(rule.direction);
+        }
+        
         return false;
     }
 
@@ -73,15 +78,19 @@ const main = (input) => {
         ].sort((a, b) => a - b);
     }
 
+    const mapWorkflow = new Map();
+    workflows.forEach((x) => mapWorkflow.set(x.name, x.rules));
+    const inWorkflow = mapWorkflow.get("in");
+
     const distinctA = collectDistinctRating("a");
     const distinctM = collectDistinctRating("m");
     const distinctS = collectDistinctRating("s");
     const distinctX = collectDistinctRating("x");
 
-    distinctA.unshift(0);
-    distinctM.unshift(0);
-    distinctS.unshift(0);
-    distinctX.unshift(0);
+    distinctA.unshift(1);
+    distinctM.unshift(1);
+    distinctS.unshift(1);
+    distinctX.unshift(1);
 
     distinctA.push(4000);
     distinctM.push(4000);
@@ -94,44 +103,46 @@ const main = (input) => {
     console.log(distinctX);
 
     let sum = 0;
-    for (let j = 0; j < distinctA.length - 1; j++) {
+    for (let j = 0; j < distinctA.length -1 ; j++) {
         const a = distinctA[j];
         const nextA = distinctA[j + 1];
-        console.log("---- : " + j)
+        const fA = nextA - a;
+
+        console.log("-------- ", j);
+
         for (let h = 0; h < distinctM.length - 1; h++) {
             const m = distinctM[h];
             const nextM = distinctM[h + 1];
-            console.log("--- : " + h)
+            const fM = nextM - m;
+
+            console.log("------ ", h);
+
             for (let g = 0; g < distinctS.length - 1; g++) {
                 const s = distinctS[g];
                 const nextS = distinctS[g + 1];
+                const fS = nextS - s;
+
                 for (let i = 0; i < distinctX.length - 1; i++) {
                     const x = distinctX[i];
-                    const nextX = distinctX[i + 1];
 
-                    const part = {a : a + 0.5, m : m + 0.5, s : s + 0.5, x : x + 0.5};
+                    const part = {a: a + 0.5, m: m + 0.5, s: s + 0.5, x: x + 0.5};
                     let safeLoop = 0;
                     let currentWorkflow = inWorkflow;
 
                     while (currentWorkflow !== true && currentWorkflow !== false && safeLoop < 560) {
                         currentWorkflow = executeWorkflow(currentWorkflow, part);
-
                         safeLoop++;
-                        if (safeLoop > 559) {
-                            console.log("safeLoop");
-                            break;
-                        }
                     }
 
                     if (currentWorkflow === true) {
-                        //console.log(a, nextA, "/", m, nextM, "/", s, nextS, "/", x, nextX);
-                        sum = sum + (nextX - x) * (nextS - s) * (nextM - m) * (nextA - a);
+                        const nextX = distinctX[i + 1];
+                        const fX = nextX - x;
+                        sum = sum + fA * fM * fS * fX;
                     }
                 }
             }
         }
     }
-
     console.log(sum);
 };
 
