@@ -72,8 +72,11 @@ const main = (input) => {
                     .map((x) => x.rules)
                     .flat()
                     .filter((x) => x.condition !== null && x.condition.includes(rating))
-                    .map((x) => x.condition.replaceAll(/[<>]+/gi, "").replaceAll(rating, ""))
-                    .map((x) => parseInt(x))
+                    .map((x) => x.condition.replaceAll(rating, ""))
+                    .map((x) => {
+                        const sign = x[0];
+                        return parseInt(x.substring(1));
+                    })
             ),
         ].sort((a, b) => a - b);
     }
@@ -137,7 +140,9 @@ const main = (input) => {
                     if (currentWorkflow === true) {
                         const nextX = distinctX[i + 1];
                         const fX = nextX - x;
-                        sum = sum + fA * fM * fS * fX;
+                        
+                        const factor = xLength * sLength * mLength * aLength;
+                        sum = sum + factor;
                     }
                 }
             }
