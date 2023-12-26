@@ -1,12 +1,16 @@
 {
   "name": "advent_of_code_2023",
   "version": "1.0.0",
-  "type": "module",
   "scripts": {
-    "main": "node main.js"
+    "main": "ts-node -r ./env-loader.ts main.ts",
+    "input": "ts-node -r ./env-loader.ts input.ts"
   },
   "dependencies": {
-    "advent_of_code_ts_library": "^1.0.3",
+    "@types/node": "^20.10.5",
+    "dotenv": "^16.3.1",
+    "lodash": "^4.17.21",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
     "z3-solver": "^4.12.4"
   }
 }
