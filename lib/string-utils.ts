@@ -20,3 +20,8 @@ export function replaceAllOccurrences(str: string, search: string, replacement: 
 export function compressString(str: string): string {
     return str.replace(/(.)\1+/g, (match, char) => `${char}${match.length}`);
 }
+
+export function extractNumbers(str: string, splitter?: string): number[] {
+    if (!splitter) splitter = " ";
+    return str.split(splitter).map(number => parseInt(number)).filter(number => !isNaN(number));
+}
