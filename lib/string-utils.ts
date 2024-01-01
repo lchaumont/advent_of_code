@@ -25,3 +25,15 @@ export function extractNumbers(str: string, splitter?: string): number[] {
     if (!splitter) splitter = " ";
     return str.split(splitter).map(number => parseInt(number)).filter(number => !isNaN(number));
 }
+
+export function countChars(str: string): Record<string, number> {
+    const chars: Record<string, number> = {};
+    str.split("").forEach(char => {
+        if (chars[char]) {
+            chars[char]++;
+        } else {
+            chars[char] = 1;
+        }
+    });
+    return chars;
+}
