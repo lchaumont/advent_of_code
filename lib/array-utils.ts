@@ -58,3 +58,25 @@ export function permutations<T>(elements: T[]): T[][] {
     permute([...elements], 0);
     return result;
 }
+
+export function mergeIntervals(intervals: [number, number][]): [number, number][] {
+    const result: [number, number][] = [];
+
+    intervals.sort((a, b) => a[0] - b[0]);
+
+    let currentInterval = intervals[0];
+    for (let i = 1; i < intervals.length; i++) {
+        const [currentStart, currentEnd] = currentInterval;
+        const [nextStart, nextEnd] = intervals[i];
+
+        if (currentEnd >= nextStart) {
+            currentInterval = [currentStart, Math.max(currentEnd, nextEnd)];
+        } else {
+            result.push(currentInterval);
+            currentInterval = intervals[i];
+        }
+    }
+
+    result.push(currentInterval);
+    return result;
+}
