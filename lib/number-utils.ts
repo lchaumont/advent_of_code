@@ -52,6 +52,10 @@ export function modExponentiation(base: number, exponent: number, mod: number): 
     return result;
 }
 
+export function sum(...args: number[]): number {
+    return args.reduce((acc, num) => acc + num, 0);
+}
+
 export function factorial(n: number): number {
     if (n === 0 || n === 1) return 1;
     return n * factorial(n - 1);

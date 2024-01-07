@@ -36,6 +36,44 @@ export class Grid<T> implements IGrid<T> {
         }
     }
 
+    getRow(row: number): T[] {
+        if (row >= 0 && row < this.rows) {
+            return this.data[row];
+        }
+        throw new Error("Row out of grid bounds.");
+    }
+
+    getColumn(col: number): T[] {
+        if (col >= 0 && col < this.cols) {
+            return this.data.map((row) => row[col]);
+        }
+        throw new Error("Column out of grid bounds.");
+    }
+
+    search(callback: (value: T) => boolean): T[] {
+        const found: T[] = [];
+        for (let row = 0; row < this.rows; row++) {
+            for (let col = 0; col < this.cols; col++) {
+                if (callback(this.data[row][col])) {
+                    found.push(this.data[row][col]);
+                }
+            }
+        }
+        return found;
+    }
+
+    searchIndex(callback: (value: T) => boolean): [number, number][] {
+        const found: [number, number][] = [];
+        for (let row = 0; row < this.rows; row++) {
+            for (let col = 0; col < this.cols; col++) {
+                if (callback(this.data[row][col])) {
+                    found.push([row, col]);
+                }
+            }
+        }
+        return found;
+    }
+
     private isInGridBounds(row: number, col: number): boolean {
         return row >= 0 && row < this.rows && col >= 0 && col < this.cols;
     }
