@@ -13,10 +13,6 @@ export function countOccurrences(mainStr: string, subStr: string): number {
     return matches ? matches.length : 0;
 }
 
-export function replaceAllOccurrences(str: string, search: string, replacement: string): string {
-    return str.split(search).join(replacement);
-}
-
 export function compressString(str: string): string {
     return str.replace(/(.)\1+/g, (match, char) => `${char}${match.length}`);
 }
