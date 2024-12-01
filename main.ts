@@ -12,8 +12,12 @@ async function main() {
 
         const runner = await import(`./${year}/${day}/part${part}.ts`);
         const start = new Date().getTime();
-        runner.default(text);
+        const anwser = runner.default(text);
         const end = new Date().getTime();
+
+        if (anwser !== undefined) {
+            console.log(`Answer: ${anwser}`);
+        }
 
         console.log(`Time: ${end - start}ms`);
     } catch (err) {

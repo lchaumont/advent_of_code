@@ -80,3 +80,21 @@ export function mergeIntervals(intervals: [number, number][]): [number, number][
     result.push(currentInterval);
     return result;
 }
+
+export function groupBy<K extends string | number | symbol, T>(arr: T[], key: (item: T) => K): Record<K, T[]> {
+    return arr.reduce((groups, item) => {
+        const group = key(item);
+        if (!groups[group]) groups[group] = []
+        groups[group].push(item);
+        return groups;
+    }, {} as Record<K, T[]>);
+}
+
+export function countBy<K extends string | number | symbol, T>(arr: T[], key: (item: T) => K): Record<K, number> {
+    return arr.reduce((counts, item) => {
+        const group = key(item);
+        if (!counts[group]) counts[group] = 0;
+        counts[group]++;
+        return counts;
+    }, {} as Record<K, number>);
+}
