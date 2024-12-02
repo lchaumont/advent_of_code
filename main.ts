@@ -16,7 +16,7 @@ async function main() {
         const end = new Date().getTime();
 
         if (anwser !== undefined) {
-            console.log(`Answer: ${anwser}`);
+            console.log("Answer: ", anwser);
         }
 
         console.log(`Time: ${end - start}ms`);

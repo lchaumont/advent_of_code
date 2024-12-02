@@ -1,5 +1,3 @@
-import {mergeIntervals} from "../../lib/array-utils";
-
 const main = (input: string) => {
     const lines: string[] = input
         .replaceAll("\r", "")
@@ -38,7 +36,7 @@ const main = (input: string) => {
         const key = getMapKey(x, y);
         const value = map.get(key) ?? 0;
         map.set(key, value + 1);
-    }
+    };
 
     for (const {minX, maxX, minY, maxY} of data) {
         if (minX === maxX) {
