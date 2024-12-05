@@ -129,6 +129,15 @@ export function groupBy<K extends string | number | symbol, T>(arr: T[], key: (i
     }, {} as Record<K, T[]>);
 }
 
+export function groupAndMapBy<K extends string | number | symbol, T, V>(arr: T[], key: (item: T) => K, map: (item: T) => V): Record<K, V[]> {
+    return arr.reduce((groups, item) => {
+        const group = key(item);
+        if (!groups[group]) groups[group] = [];
+        groups[group].push(map(item));
+        return groups;
+    }, {} as Record<K, V[]>);
+}
+
 export function countBy<K extends string | number | symbol, T>(arr: T[], key: (item: T) => K): Record<K, number> {
     return arr.reduce((counts, item) => {
         const group = key(item);

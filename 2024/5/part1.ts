@@ -1,35 +1,49 @@
-import {groupBy} from "../../lib/array-utils";
+import {groupAndMapBy, groupBy} from "../../lib/array-utils";
 
 const main = (input: string) => {
-    let [r, u] = input.split("\n\n");
+    let [r, u] = input.replaceAll("\r", "").split("\n\n");
 
     const rules = r
-        .replaceAll("\r", "")
         .split("\n")
-        .filter((line: string) => line.trim() !== "");
+        .filter((line: string) => line.trim() !== "")
+        .map((line: string) => line.split("|").map((n) => parseInt(n)));
 
     const updates = u
-        .replaceAll("\r", "")
         .split("\n")
-        .filter((line: string) => line.trim() !== "");
+        .filter((line: string) => line.trim() !== "")
+        .map((line: string) => line.split(",").map((n) => parseInt(n)));
 
-    let rulesGrouped = groupBy(rules, (rule) => rule.split("|")[0]);
-    Object.keys(rulesGrouped).forEach((key) => {
-        rulesGrouped[key] = rulesGrouped[key].map((rule) => rule.split("|")[1]);
-    });
+    let rulesGrouped = groupAndMapBy(rules, (rule) => rule[0], (rule) => rule[1]);
 
-    console.log(rulesGrouped);
+    let result = 0;
 
-    for (const update of updates) {
-        const numbers = update.split(",");
+    for (let i = 0; i < updates.length; i++) {
+        const indexes = updates[i];
 
-        for (let i = 0; i < numbers.length - 1; i++) {
-            const current = numbers[i];
-            const next = numbers[i + 1];
+        let isOk = true;
 
-            
+        OUTER: for (let j = 0; j < indexes.length; j++) {
+            const current = indexes[j];
+
+            for (let k = j; k < indexes.length; k++) {
+                const target = indexes[k];
+                const rulesForTarget = rulesGrouped[target];
+
+                if (rulesForTarget && rulesForTarget.includes(current)) {
+                    isOk = false;
+                    break OUTER;
+                }
+            }
+        }
+
+        if (isOk) {
+            const toAdd = indexes[Math.floor(indexes.length / 2)];
+            console.log(toAdd);
+            result += toAdd;
         }
     }
+
+    return result;
 };
 
 export default main;
