@@ -27,8 +27,8 @@ export function chunkArray<T>(arr: T[], chunkSize: number): T[][] {
     );
 }
 
-export function removeDuplicates<T>(arr: T[]): T[] {
-    return Array.from(new Set(arr));
+export function removeDuplicates<T, K>(arr: T[], key: (v: T) => K): T[] {
+    return arr.filter((value, index, self) => self.findIndex((v) => key(v) === key(value)) === index);
 }
 
 /**
@@ -90,12 +90,16 @@ export function permutations<T>(elements: T[]): T[][] {
 }
 
 type ElementType<A> = A extends ReadonlyArray<infer T> ? T : never;
-type ElementsOfAll<Inputs, R extends ReadonlyArray<unknown> = []> = Inputs extends readonly [infer F, ...infer M] ? ElementsOfAll<M, [...R, ElementType<F>]> : R;
+type ElementsOfAll<Inputs, R extends ReadonlyArray<unknown> = []> = Inputs extends readonly [infer F, ...infer M]
+    ? ElementsOfAll<M, [...R, ElementType<F>]>
+    : R;
 type CartesianProduct<Inputs> = ElementsOfAll<Inputs>[];
 
-export function cartesianProduct<Sets extends ReadonlyArray<ReadonlyArray<unknown>>>(sets: Sets): CartesianProduct<Sets> {
-    return sets.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].flat()))) as CartesianProduct<Sets>;
-  }
+export function cartesianProduct<Sets extends ReadonlyArray<ReadonlyArray<unknown>>>(
+    sets: Sets
+): CartesianProduct<Sets> {
+    return sets.reduce((a, b) => a.flatMap((d) => b.map((e) => [d, e].flat()))) as CartesianProduct<Sets>;
+}
 
 /**
  * Merge intervals.
@@ -103,8 +107,8 @@ export function cartesianProduct<Sets extends ReadonlyArray<ReadonlyArray<unknow
  * const intervals = [[1, 3], [2, 6], [8, 10], [15, 18]];
  * const result = mergeIntervals(intervals);
  * console.log(result); // [[1, 6], [8, 10], [15, 18]]
- * @param intervals  
- * @returns 
+ * @param intervals
+ * @returns
  */
 export function mergeIntervals(intervals: [number, number][]): [number, number][] {
     const result: [number, number][] = [];
@@ -137,7 +141,11 @@ export function groupBy<K extends string | number | symbol, T>(arr: T[], key: (i
     }, {} as Record<K, T[]>);
 }
 
-export function groupAndMapBy<K extends string | number | symbol, T, V>(arr: T[], key: (item: T) => K, map: (item: T) => V): Record<K, V[]> {
+export function groupAndMapBy<K extends string | number | symbol, T, V>(
+    arr: T[],
+    key: (item: T) => K,
+    map: (item: T) => V
+): Record<K, V[]> {
     return arr.reduce((groups, item) => {
         const group = key(item);
         if (!groups[group]) groups[group] = [];
@@ -154,3 +162,13 @@ export function countBy<K extends string | number | symbol, T>(arr: T[], key: (i
         return counts;
     }, {} as Record<K, number>);
 }
+
+const arrayMove = (arr: Array<unknown>, old_index: number, new_index: number) => {
+    if (new_index >= arr.length) {
+        var k = new_index - arr.length + 1;
+        while (k--) {
+            arr.push(undefined);
+        }
+    }
+    arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+};

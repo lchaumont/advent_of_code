@@ -96,6 +96,24 @@ export class Grid<T> implements IGrid<T> {
         return neighbors;
     }
 
+    getNeighborsIndex(row: number, col: number, includesDiagonals = false): [number, number][] {
+        const neighbors: [number, number][] = [];
+
+        const neighborsDelta = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+        if (includesDiagonals) neighborsDelta.push([-1, -1], [-1, 1], [1, -1], [1, 1])
+
+        for (const [deltaRow, deltaCol] of neighborsDelta) {
+            const newRow = row + deltaRow;
+            const newCol = col + deltaCol;
+
+            if (this.isInGridBounds(newRow, newCol)) {
+                neighbors.push([newRow, newCol]);
+            }
+        }
+
+        return neighbors;
+    }
+
     transpose(): Grid<T> {
         const transposedGrid = new Grid(this.rows, this.cols, this.data[0][0]);
         transposedGrid.fill((row, col) => this.getCellValue(col, row));
