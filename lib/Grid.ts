@@ -74,11 +74,11 @@ export class Grid<T> implements IGrid<T> {
         return found;
     }
 
-    private isInGridBounds(row: number, col: number): boolean {
+    isInGridBounds(row: number, col: number): boolean {
         return row >= 0 && row < this.rows && col >= 0 && col < this.cols;
     }
 
-    getNeighbors(row: number, col: number, includesDiagonals = false): T[] {
+    getNeighbors(row: number, col: number, includesDiagonals = false, includesOutsideBounds = false): T[] {
         const neighbors: T[] = [];
 
         const neighborsDelta = [[-1, 0], [1, 0], [0, -1], [0, 1]];
@@ -88,7 +88,7 @@ export class Grid<T> implements IGrid<T> {
             const newRow = row + deltaRow;
             const newCol = col + deltaCol;
 
-            if (this.isInGridBounds(newRow, newCol)) {
+            if (includesOutsideBounds || this.isInGridBounds(newRow, newCol)) {
                 neighbors.push(this.data[newRow][newCol]);
             }
         }
@@ -96,7 +96,7 @@ export class Grid<T> implements IGrid<T> {
         return neighbors;
     }
 
-    getNeighborsIndex(row: number, col: number, includesDiagonals = false): [number, number][] {
+    getNeighborsIndex(row: number, col: number, includesDiagonals = false, includesOutsideBounds = false): [number, number][] {
         const neighbors: [number, number][] = [];
 
         const neighborsDelta = [[-1, 0], [1, 0], [0, -1], [0, 1]];
@@ -106,7 +106,7 @@ export class Grid<T> implements IGrid<T> {
             const newRow = row + deltaRow;
             const newCol = col + deltaCol;
 
-            if (this.isInGridBounds(newRow, newCol)) {
+            if (includesOutsideBounds || this.isInGridBounds(newRow, newCol)) {
                 neighbors.push([newRow, newCol]);
             }
         }
