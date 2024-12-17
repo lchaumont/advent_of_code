@@ -1,5 +1,7 @@
 import {Grid} from "../../lib/Grid";
 
+// #Djikstra
+
 const main = (input: string) => {
     const chars: string[][] = input
         .replaceAll("\r", "")
@@ -21,7 +23,6 @@ const main = (input: string) => {
     const start = {x: 1, y: height - 2};
     const end = {x: width - 2, y: 1};
 
-    // Generic Djikstra's algorithm, but neighbors in same direction cost 1, others cost 1001
     const visited = new Map<string, number>();
     const visitedKey = (x: number, y: number, cost: number, direction: string) => `${x},${y},${direction}`;
 
