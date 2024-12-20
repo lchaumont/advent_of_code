@@ -1,0 +1,3 @@
+bn LSHIFT 2 -> bo
+lf RSHIFT 1 -> bn
+50 RSHIFT 3 -> lf

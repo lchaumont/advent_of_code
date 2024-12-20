@@ -1,3 +1,10 @@
+export function isNumber(value: any): boolean {
+    if (typeof value === "number") return true;
+    if (typeof value === "string" && !isNaN(Number(value))) return true;
+
+    return false;
+}
+
 export function numberSort(a: number, b: number, reversed = false): number {
     if (a === b) return 0;
     if (reversed) return a > b ? -1 : 1;

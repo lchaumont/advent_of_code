@@ -1,4 +1,4 @@
-import { Grid } from "../../lib/Grid";
+import {Grid} from "../../lib/Grid";
 
 const main = (input: string) => {
     const lines: string[] = input
@@ -30,24 +30,24 @@ const main = (input: string) => {
     let [cx, cy] = start;
     let nx, ny;
     const referenceTimes = new Map<string, number>();
-    const cheatedTimes: {key: string, cost: number}[] = [];
+    const cheatedTimes: {key: string; cost: number}[] = [];
     const toKey = (x: number, y: number) => `${x},${y}`;
 
-    const getPositionsInRange = (start: {x: number, y: number}, range: number) => {
-        const { x, y } = start;
+    const getPositionsInRange = (start: {x: number; y: number}, range: number) => {
+        const {x, y} = start;
         const positions = [];
-    
+
         for (let dx = -range; dx <= range; dx++) {
             for (let dy = -range; dy <= range; dy++) {
                 const distance = Math.abs(dx) + Math.abs(dy);
                 if (distance <= range && distance > 1) {
-                    positions.push({ x: x + dx, y: y + dy, dx, dy, distance });
+                    positions.push({x: x + dx, y: y + dy, dx, dy, distance});
                 }
             }
         }
-    
+
         return positions;
-    }
+    };
 
     let cost = 0;
 
@@ -55,7 +55,12 @@ const main = (input: string) => {
         const key = toKey(cx, cy);
         referenceTimes.set(key, cost);
 
-        const deltas = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+        const deltas = [
+            [0, 1],
+            [0, -1],
+            [1, 0],
+            [-1, 0],
+        ];
 
         for (const [dx, dy] of deltas) {
             const adjx = cx + dx;

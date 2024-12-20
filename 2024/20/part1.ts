@@ -1,4 +1,4 @@
-import { Grid } from "../../lib/Grid";
+import {Grid} from "../../lib/Grid";
 
 const main = (input: string) => {
     const lines: string[] = input
@@ -30,7 +30,7 @@ const main = (input: string) => {
     let [cx, cy] = start;
     let nx, ny;
     const referenceTimes = new Map<string, number>();
-    const cheatedTimes: {key: string, cost: number}[] = [];
+    const cheatedTimes: {key: string; cost: number}[] = [];
     const toKey = (x: number, y: number) => `${x},${y}`;
 
     let cost = 0;
@@ -39,7 +39,12 @@ const main = (input: string) => {
         const key = toKey(cx, cy);
         referenceTimes.set(key, cost);
 
-        const deltas = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+        const deltas = [
+            [0, 1],
+            [0, -1],
+            [1, 0],
+            [-1, 0],
+        ];
 
         for (const [dx, dy] of deltas) {
             const adjx = cx + dx;
