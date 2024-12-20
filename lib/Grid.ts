@@ -114,6 +114,35 @@ export class Grid<T> implements IGrid<T> {
         return neighbors;
     }
 
+    getAtDistanceIndex(row: number, col: number, distance: number, atExact = false, includesDiagonals = false): [number, number][] {
+        const neighbors: [number, number][] = [];
+
+        const neighborsDelta = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+        if (includesDiagonals) neighborsDelta.push([-1, -1], [-1, 1], [1, -1], [1, 1])
+
+        for (const [deltaRow, deltaCol] of neighborsDelta) {
+            if (atExact) {
+                const newRow = row + deltaRow * distance;
+                const newCol = col + deltaCol * distance;
+
+                if (this.isInGridBounds(newRow, newCol)) {
+                    neighbors.push([newRow, newCol]);
+                }
+            } else {
+                for (let i = 1; i <= distance; i++) {
+                    const newRow = row + deltaRow * i;
+                    const newCol = col + deltaCol * i;
+    
+                    if (this.isInGridBounds(newRow, newCol)) {
+                        neighbors.push([newRow, newCol]);
+                    }
+                }
+            }
+        }
+
+        return neighbors;
+    }
+
     transpose(): Grid<T> {
         const transposedGrid = new Grid(this.rows, this.cols, this.data[0][0]);
         transposedGrid.fill((row, col) => this.getCellValue(col, row));
