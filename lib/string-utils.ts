@@ -22,6 +22,10 @@ export function extractNumbers(str: string, splitter?: string): number[] {
     return str.split(splitter).map(number => parseInt(number)).filter(number => !isNaN(number));
 }
 
+export function extractNumbers2(str: string): number[] {
+    return str.match(/\d+/g)?.map(number => parseInt(number)) ?? [];
+}
+
 export function countChars(str: string): Record<string, number> {
     const chars: Record<string, number> = {};
     str.split("").forEach(char => {
