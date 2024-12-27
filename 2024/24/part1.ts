@@ -30,7 +30,7 @@ const main = (input: string) => {
         const rightWire = getWire(right);
         const outWire = getWire(out);
 
-        const gate = new Gate(leftWire, rightWire, operator as "OR" | "AND" | "XOR", outWire);
+        const gate = new Gate(leftWire, rightWire, operator as "OR" | "AND" | "XOR");
         outWire.gate = gate;
     }
 
@@ -85,13 +85,11 @@ class Gate {
     left: Wire;
     right: Wire;
     operator: "OR" | "AND" | "XOR";
-    output: Wire;
 
-    constructor(left: Wire, right: Wire, operator: "OR" | "AND" | "XOR", output: Wire) {
+    constructor(left: Wire, right: Wire, operator: "OR" | "AND" | "XOR") {
         this.left = left;
         this.right = right;
         this.operator = operator;
-        this.output = output;
     }
 }
 
