@@ -62,7 +62,19 @@ export class Grid<T> implements IGrid<T> {
         return found;
     }
 
-    searchIndex(callback: (value: T) => boolean): [number, number][] {
+    searchIndex(callback: (value: T) => boolean): [number, number] | null {
+        const found: [number, number][] = [];
+        for (let row = 0; row < this.rows; row++) {
+            for (let col = 0; col < this.cols; col++) {
+                if (callback(this.data[row][col])) {
+                    return [row, col];
+                }
+            }
+        }
+        return null;
+    }
+
+    searchIndexes(callback: (value: T) => boolean): [number, number][] {
         const found: [number, number][] = [];
         for (let row = 0; row < this.rows; row++) {
             for (let col = 0; col < this.cols; col++) {

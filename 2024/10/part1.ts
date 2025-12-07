@@ -14,7 +14,7 @@ const main = (input: string) => {
         }
     }
 
-    const startsPositions = grid.searchIndex((v) => v === 0);
+    const startsPositions = grid.searchIndexes((v) => v === 0);
 
     const foundKey = (v: [number, number]) => v[0] + "," + v[1];
 

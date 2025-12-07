@@ -26,7 +26,7 @@ const main = (input: string) => {
 
     DRAW_LOOP: for (const draw of draws) {
         for (const grid of grids) {
-            const correspondingCell = grid.searchIndex((cell) => cell.value === draw)[0];
+            const correspondingCell = grid.searchIndexes((cell) => cell.value === draw)[0];
 
             if (correspondingCell) {
                 grid.setCellValue(correspondingCell[0], correspondingCell[1], {value: draw, haveBeenDraw: false});

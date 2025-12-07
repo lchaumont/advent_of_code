@@ -22,8 +22,8 @@ const main = (input: string) => {
     const toBreak = 100;
     let result = 0;
 
-    const start = grid.searchIndex((v) => v === "S")[0];
-    const end = grid.searchIndex((v) => v === "E")[0];
+    const start = grid.searchIndexes((v) => v === "S")[0];
+    const end = grid.searchIndexes((v) => v === "E")[0];
 
     grid.setCellValue(end[0], end[1], ".");
 
