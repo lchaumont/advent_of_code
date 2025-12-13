@@ -14,7 +14,7 @@ export function countOccurrences(mainStr: string, subStr: string): number {
 }
 
 export function compressString(str: string): string {
-    return str.replace(/(.)\1+/g, (match, char) => `${char}${match.length}`);
+    return str.replace(/(.)\1*/g, (match, char) => `${match.length}${char}`);
 }
 
 export function extractNumbers(str: string, splitter?: string): number[] {
@@ -23,7 +23,7 @@ export function extractNumbers(str: string, splitter?: string): number[] {
 }
 
 export function extractNumbers2(str: string): number[] {
-    return str.match(/\d+/g)?.map(number => parseInt(number)) ?? [];
+    return str.match(/(?:\+|-)?\d+/g)?.map(number => parseInt(number)) ?? [];
 }
 
 export function countChars(str: string): Record<string, number> {
